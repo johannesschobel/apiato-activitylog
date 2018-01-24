@@ -1,0 +1,7 @@
+{
+  "name": "apiato/activitylog",
+  "description": "ActivityLog Container for apiato.",
+  "require": {
+    "spatie/laravel-activitylog" : "^2.0"
+  }
+}
