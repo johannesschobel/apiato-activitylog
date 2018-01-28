@@ -4,6 +4,7 @@ namespace App\Containers\ActivityLog\Tasks;
 
 use App\Containers\User\Models\User;
 use App\Ship\Parents\Tasks\Task;
+use Spatie\Activitylog\Models\Activity;
 
 /**
  * Class CreateActivityLogEntryTask
@@ -23,9 +24,9 @@ class CreateActivityLogEntryTask extends Task
      * @param array       $options additional key/value information
      * @param string|null $log     the log file to add this entry
      *
-     * @return void
+     * @return Activity
      */
-    public function run(User $causer, $model, $message = '', $options = [], $log = null)
+    public function run(User $causer, $model, $message = '', $options = [], $log = null) : Activity
     {
         // get the default log name
         if ($log === null) {
@@ -33,10 +34,12 @@ class CreateActivityLogEntryTask extends Task
         }
 
         // create the log entry
-        activity($log)
+        $action = activity($log)
             ->causedBy($causer)
             ->performedOn($model)
             ->withProperties($options)
             ->log($message);
+
+        return $action;
     }
 }
