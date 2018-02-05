@@ -6,7 +6,7 @@ use Apiato\Core\Foundation\Facades\Apiato;
 use App\Containers\ActivityLog\Data\Criterias\FilterActivityLogsByUserCriteria;
 use App\Containers\ActivityLog\Data\Repositories\ActivityLogRepository;
 use App\Containers\Authentication\Tasks\GetAuthenticatedUserTask;
-use App\Ship\Criterias\Eloquent\OrderByCreationDateDescendingCriteria;
+use App\Ship\Criterias\Eloquent\OrderByUpdateDateDescendingCriteria;
 use App\Ship\Parents\Tasks\Task;
 
 /**
@@ -41,7 +41,7 @@ class GetMyActivitiesTask extends Task
 
         $this->repository->pushCriteria(new FilterActivityLogsByUserCriteria($user));
 
-        $this->repository->pushCriteria(new OrderByCreationDateDescendingCriteria());
+        $this->repository->pushCriteria(new OrderByUpdateDateDescendingCriteria());
 
         return $this->repository->paginate();
     }

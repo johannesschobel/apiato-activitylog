@@ -22,4 +22,13 @@ return [
      */
     'translate_messages_on_output' => true,
 
+    /**
+     * Merge entries, if you consecutively trigger the same entry below a given time threshold (in minutes).
+     * For example, if a user calls several times the same route (where an activity log is generated), the entry is
+     * UPDATED instead of CREATING a new one!
+     */
+    'merge_entries' => [
+        'enable' => true,
+        'time_threshold' => 10,
+    ],
 ];

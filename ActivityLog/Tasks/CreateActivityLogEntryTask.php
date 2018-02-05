@@ -2,8 +2,10 @@
 
 namespace App\Containers\ActivityLog\Tasks;
 
+use App\Containers\ActivityLog\Models\ActivityLog;
 use App\Containers\User\Models\User;
 use App\Ship\Parents\Tasks\Task;
+use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
 /**
@@ -31,6 +33,29 @@ class CreateActivityLogEntryTask extends Task
         // get the default log name
         if ($log === null) {
             $log = config('activitylog.default_log_name', 'default');
+        }
+
+        if (config('activitylog-container.merge_entries.enable', false)) {
+            /** @var ActivityLog $latestActions */
+            $latestActions = $causer
+                ->actions()
+                ->where('subject_type', '=', get_class($model))
+                ->where('subject_id', '=', $model->id)
+                ->where('description', '=', $message)
+                ->where('log_name', '=', $log)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+            // there already exist an entry for this model
+            if ($latestActions) {
+                // now check, if it is in the defined timeframe!
+                if ($latestActions->updated_at >= Carbon::now()->subMinutes(config('activitylog-container.merge_entries.time_threshold'))) {
+                    // we need to simply update the entry
+                    $latestActions->touch();
+
+                    return $latestActions;
+                }
+            }
         }
 
         // create the log entry
